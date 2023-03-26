@@ -19,8 +19,8 @@ pub fn parse(input: &str) -> parser::Ast {
 
 #[derive(Debug, PartialEq, Eq, Error)]
 pub enum ProcessStrError {
-    #[error("an include was requested without a filesystem context")]
-    IncludeRequested(ParsedPath),
+    #[error("an import was requested without a filesystem context")]
+    ImportRequested(ParsedPath),
 }
 
 pub fn process(input: &str, state: ProcessorState) -> ExpandStr {
@@ -62,7 +62,7 @@ impl Iterator for ExpandStr {
             ExpandEvent::EnterFile(node, path) => Some(Err(LocatedBuilder::new()
                 .pos(node.text_range())
                 .resolve_file(self.inner.location())
-                .finish(ProcessStrError::IncludeRequested(path)))),
+                .finish(ProcessStrError::ImportRequested(path)))),
             ExpandEvent::Completed(state) => {
                 self.final_state = Some(state);
                 None

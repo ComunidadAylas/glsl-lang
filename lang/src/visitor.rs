@@ -193,7 +193,7 @@ macro_rules! make_visitor_trait {
         Visit::Children
       }
 
-      fn visit_preprocessor_include(&mut self, _: $($ref)* ast::PreprocessorInclude) -> Visit {
+      fn visit_preprocessor_moj_import(&mut self, _: $($ref)* ast::PreprocessorMojImport) -> Visit {
         Visit::Children
       }
 
@@ -463,7 +463,7 @@ macro_rules! make_host_trait {
             ast::PreprocessorData::If(pi) => pi.$mthd_name(visitor),
             ast::PreprocessorData::IfDef(pid) => pid.$mthd_name(visitor),
             ast::PreprocessorData::IfNDef(pind) => pind.$mthd_name(visitor),
-            ast::PreprocessorData::Include(pi) => pi.$mthd_name(visitor),
+            ast::PreprocessorData::MojImport(pi) => pi.$mthd_name(visitor),
             ast::PreprocessorData::Line(pl) => pl.$mthd_name(visitor),
             ast::PreprocessorData::Pragma(pp) => pp.$mthd_name(visitor),
             ast::PreprocessorData::Undef(pu) => pu.$mthd_name(visitor),
@@ -556,12 +556,12 @@ macro_rules! make_host_trait {
       }
     }
 
-    impl $host_ty for ast::PreprocessorInclude {
+    impl $host_ty for ast::PreprocessorMojImport {
       fn $mthd_name<V>($($ref)* self, visitor: &mut V)
       where
           V: $visitor_ty,
       {
-        let _ = visitor.visit_preprocessor_include(self);
+        let _ = visitor.visit_preprocessor_moj_import(self);
       }
     }
 
