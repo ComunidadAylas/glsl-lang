@@ -78,10 +78,10 @@ fn if_section_or_control_line(parser: &mut ParserRun) {
             let name = SmolStr::from(parser.text(token));
             pp_type_name = Some(name.clone());
             let result = match name.as_ref() {
-                "include" => {
+                "moj_import" => {
                     parser.bump();
-                    pp_include(parser);
-                    Some(PP_INCLUDE)
+                    pp_moj_import(parser);
+                    Some(PP_MOJ_IMPORT)
                 }
                 "define" => {
                     parser.bump();
@@ -280,14 +280,14 @@ fn pp_rs_ident(
     Ok(())
 }
 
-fn pp_include(parser: &mut ParserRun) {
+fn pp_moj_import(parser: &mut ParserRun) {
     // We're about to parse a path
     parser.input.set_expect_angle_string(true);
 
     parser.skip_trivia();
 
     // Consume include path
-    parser.start_node(PP_INCLUDE_PATH);
+    parser.start_node(PP_MOJ_IMPORT_PATH);
     pp_tokens(parser);
     parser.finish_node();
 

@@ -45,8 +45,7 @@ pub enum ProcessingErrorKind {
         expected: usize,
         actual: usize,
     },
-    IncludeNotSupported,
-    IncludeNotFound {
+    ImportNotFound {
         path: ParsedPath,
     },
     InvalidTokenPaste {
@@ -66,7 +65,7 @@ pub enum ProcessingErrorKind {
     #[from(ignore)]
     DirectiveUndef(nodes::IfDefError),
     DirectiveError(nodes::ErrorError),
-    DirectiveInclude(nodes::IncludeError),
+    DirectiveInclude(nodes::MojImportError),
     DirectiveLine(nodes::LineError),
     DirectivePragma(nodes::PragmaError),
 }
@@ -118,11 +117,8 @@ impl std::fmt::Display for ProcessingErrorKind {
             } => {
                 write!(f, "'macro expansion' : wrong number of arguments in input of macro {} : expected {}, got {}", ident, expected, actual)
             }
-            ProcessingErrorKind::IncludeNotSupported => {
-                write!(f, "'#include' : required extension not requested: GL_GOOGLE_include_directive or GL_ARB_shading_language_include")
-            }
-            ProcessingErrorKind::IncludeNotFound { path } => {
-                write!(f, "'#include' : could not find file for {}", path)
+            ProcessingErrorKind::ImportNotFound { path } => {
+                write!(f, "'#moj_import' : could not find file for {}", path)
             }
             ProcessingErrorKind::InvalidTokenPaste { token } => {
                 if let Some(token) = token {
@@ -172,7 +168,7 @@ impl std::fmt::Display for ProcessingErrorKind {
                 write!(f, "'#error' : {}", inner)
             }
             ProcessingErrorKind::DirectiveInclude(inner) => {
-                write!(f, "'#include' : {}", inner)
+                write!(f, "'#moj_import' : {}", inner)
             }
             ProcessingErrorKind::DirectiveLine(inner) => {
                 write!(f, "'#line' : {}", inner)
@@ -262,7 +258,7 @@ pub enum DirectiveKind {
     EndIf(nodes::EndIf),
     Undef(nodes::Undef),
     Error(nodes::Error),
-    Include(nodes::Include),
+    MojImport(nodes::MojImport),
     Line(nodes::Line),
     Pragma(nodes::Pragma),
     Invalid(nodes::Invalid),

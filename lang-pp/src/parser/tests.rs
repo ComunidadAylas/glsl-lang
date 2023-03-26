@@ -40,31 +40,31 @@ fn test_basic() {
 }
 
 #[test]
-fn test_include() {
+fn test_moj_import() {
     check(
-        parse("#include <x/a.glsl>\n"),
+        parse("#moj_import <x/a.glsl>\n"),
         expect![[r##"
-            ROOT@0..20
-              PP_INCLUDE@0..20
+            ROOT@0..23
+              PP_MOJ_IMPORT@0..23
                 HASH@0..1 "#"
-                IDENT_KW@1..8 "include"
-                WS@8..9 " "
-                PP_INCLUDE_PATH@9..19
-                  ANGLE_STRING@9..19 "<x/a.glsl>"
-                NEWLINE@19..20 "\n"
+                IDENT_KW@1..11 "moj_import"
+                WS@11..12 " "
+                PP_MOJ_IMPORT_PATH@12..22
+                  ANGLE_STRING@12..22 "<x/a.glsl>"
+                NEWLINE@22..23 "\n"
         "##]],
     );
     check(
-        parse("#include \"y/b.glsl\"\n"),
+        parse("#moj_import \"y/b.glsl\"\n"),
         expect![[r##"
-            ROOT@0..20
-              PP_INCLUDE@0..20
+            ROOT@0..23
+              PP_MOJ_IMPORT@0..23
                 HASH@0..1 "#"
-                IDENT_KW@1..8 "include"
-                WS@8..9 " "
-                PP_INCLUDE_PATH@9..19
-                  QUOTE_STRING@9..19 "\"y/b.glsl\""
-                NEWLINE@19..20 "\n"
+                IDENT_KW@1..11 "moj_import"
+                WS@11..12 " "
+                PP_MOJ_IMPORT_PATH@12..22
+                  QUOTE_STRING@12..22 "\"y/b.glsl\""
+                NEWLINE@22..23 "\n"
         "##]],
     );
 }

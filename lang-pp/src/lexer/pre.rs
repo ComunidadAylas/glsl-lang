@@ -188,7 +188,7 @@ impl<'i> Iterator for PreLexer<'i> {
                             token: NewlineTokenKind::NEWLINE,
                             range,
                         }) => {
-                            // A newline, this completes a potential #include
+                            // A newline, this completes a potential #moj_import
                             self.expect_angle_string = false;
 
                             // A newline

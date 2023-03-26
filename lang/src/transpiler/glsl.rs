@@ -2067,7 +2067,7 @@ where
         ast::PreprocessorData::If(ref pi) => show_preprocessor_if(f, pi, state)?,
         ast::PreprocessorData::IfDef(ref pid) => show_preprocessor_ifdef(f, pid, state)?,
         ast::PreprocessorData::IfNDef(ref pind) => show_preprocessor_ifndef(f, pind, state)?,
-        ast::PreprocessorData::Include(ref pi) => show_preprocessor_include(f, pi, state)?,
+        ast::PreprocessorData::MojImport(ref pmi) => show_preprocessor_moj_import(f, pmi, state)?,
         ast::PreprocessorData::Line(ref pl) => show_preprocessor_line(f, pl, state)?,
         ast::PreprocessorData::Pragma(ref pp) => show_preprocessor_pragma(f, pp, state)?,
         ast::PreprocessorData::Undef(ref pu) => show_preprocessor_undef(f, pu, state)?,
@@ -2192,16 +2192,16 @@ where
     show_identifier(f, &pind.ident, state)
 }
 
-/// Transpile a preprocessor_include to GLSL
-pub fn show_preprocessor_include<F>(
+/// Transpile a preprocessor_moj_import to GLSL
+pub fn show_preprocessor_moj_import<F>(
     f: &mut F,
-    pi: &ast::PreprocessorInclude,
+    pi: &ast::PreprocessorMojImport,
     state: &mut FormattingState<'_>,
 ) -> std::fmt::Result
 where
     F: Write + ?Sized,
 {
-    f.write_str("#include ")?;
+    f.write_str("#moj_import ")?;
     show_path(f, &pi.path, state)
 }
 

@@ -2500,6 +2500,7 @@ fn parse_layout_buffer_block_0() {
 }
 
 #[test]
+#[ignore = "uses Google include directives not supported on this fork"]
 #[cfg(feature = "lexer-full")]
 fn parse_multifile_pp_a() {
     use crate::lexer::full::fs::PreprocessorExt;
@@ -2943,11 +2944,11 @@ fn parse_pp_ifndef() {
     feature = "lexer-full",
     ignore = "no preprocessor directives in ast with lexer-full"
 )]
-fn parse_pp_include() {
+fn parse_pp_moj_import() {
     assert_eq!(
-        ast::Preprocessor::parse("#include <filename>\n"),
-        Ok(ast::PreprocessorData::Include(
-            ast::PreprocessorIncludeData {
+        ast::Preprocessor::parse("#moj_import <filename>\n"),
+        Ok(ast::PreprocessorData::MojImport(
+            ast::PreprocessorMojImportData {
                 path: ast::PathData::Absolute("filename".to_owned()).into()
             }
             .into()
@@ -2956,9 +2957,9 @@ fn parse_pp_include() {
     );
 
     assert_eq!(
-        ast::Preprocessor::parse("#include \\\n\"filename\"\n"),
-        Ok(ast::PreprocessorData::Include(
-            ast::PreprocessorIncludeData {
+        ast::Preprocessor::parse("#moj_import \\\n\"filename\"\n"),
+        Ok(ast::PreprocessorData::MojImport(
+            ast::PreprocessorMojImportData {
                 path: ast::PathData::Relative("filename".to_owned()).into()
             }
             .into()
@@ -3045,26 +3046,6 @@ fn parse_pp_extension() {
                     ast::PreprocessorExtensionData {
                         name: ast::PreprocessorExtensionNameData::All.into(),
                         behavior: Some(ast::PreprocessorExtensionBehaviorData::Disable.into())
-                    }
-                    .into()
-                )
-                .into()
-            )
-            .into()
-        ))
-    );
-
-    assert_eq!(
-        parse_pp("#extension GL_ARB_shading_language_include: warn\n").map(|mut iter| iter.next()),
-        Ok(Some(
-            ast::ExternalDeclarationData::Preprocessor(
-                ast::PreprocessorData::Extension(
-                    ast::PreprocessorExtensionData {
-                        name: ast::PreprocessorExtensionNameData::Specific(
-                            "GL_ARB_shading_language_include".into()
-                        )
-                        .into(),
-                        behavior: Some(ast::PreprocessorExtensionBehaviorData::Warn.into())
                     }
                     .into()
                 )

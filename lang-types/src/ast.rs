@@ -1777,9 +1777,9 @@ pub enum PreprocessorData {
     /// `#ifndef` preprocessor directive
     #[lang_util(display(extra = "#ifndef"))]
     IfNDef(PreprocessorIfNDef),
-    /// `#include` preprocessor directive
-    #[lang_util(display(extra = "#include"))]
-    Include(PreprocessorInclude),
+    /// `#moj_import` preprocessor directive
+    #[lang_util(display(extra = "#moj_import"))]
+    MojImport(PreprocessorMojImport),
     /// `#line` preprocessor directive
     #[lang_util(display(extra = "#line"))]
     Line(PreprocessorLine),
@@ -1908,18 +1908,18 @@ impl_node_content! {
     pub type PreprocessorIfNDef = Node<PreprocessorIfNDefData>;
 }
 
-/// An #include name annotation.
+/// A #moj_import name annotation.
 #[derive(Clone, Debug, PartialEq, Eq, NodeContentDisplay)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "serde", serde(crate = "rserde"))]
-pub struct PreprocessorIncludeData {
-    /// Include path
+pub struct PreprocessorMojImportData {
+    /// Import path
     pub path: Path,
 }
 
 impl_node_content! {
-    /// Type alias for `Node<PreprocessorIncludeData>`.
-    pub type PreprocessorInclude = Node<PreprocessorIncludeData>;
+    /// Type alias for `Node<PreprocessorMojImportData>`.
+    pub type PreprocessorMojImport = Node<PreprocessorMojImportData>;
 }
 
 /// A #line preprocessor directive.

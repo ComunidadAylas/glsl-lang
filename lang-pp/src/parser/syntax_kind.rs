@@ -128,10 +128,10 @@ pub enum SyntaxKind {
     PP_CONCAT,
     /// #
     PP_EMPTY,
-    /// #include
-    PP_INCLUDE,
-    /// #include path
-    PP_INCLUDE_PATH,
+    /// #moj_import
+    PP_MOJ_IMPORT,
+    /// #moj_import path
+    PP_MOJ_IMPORT_PATH,
     /// #define
     PP_DEFINE,
     PP_DEFINE_ARGS,

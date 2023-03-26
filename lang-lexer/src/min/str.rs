@@ -43,7 +43,7 @@ impl<'i> Lexer<'i> {
 enum PpFlags {
     None,
     Rest,
-    Include,
+    MojImport,
     Version,
     Extension,
     DefineName,
@@ -145,7 +145,7 @@ impl<'i> Iterator for LexerIterator<'i> {
                     return Some(Ok((range.start(), Token::PpRest(rest), range.end())));
                 }
 
-                PpFlags::Include => {
+                PpFlags::MojImport => {
                     // Expect an include path
                     debug_assert!(self.pending_tokens.is_empty());
 
@@ -370,9 +370,9 @@ impl<'i> Iterator for LexerIterator<'i> {
                             }
                             "ifdef" => Token::PpIfDef,
                             "ifndef" => Token::PpIfNDef,
-                            "include" => {
-                                self.flags = PpFlags::Include;
-                                Token::PpInclude
+                            "moj_import" => {
+                                self.flags = PpFlags::MojImport;
+                                Token::PpMojImport
                             }
                             "line" => Token::PpLine,
                             "pragma" => {

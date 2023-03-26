@@ -142,7 +142,7 @@ impl<'p, F: FileSystem> Iterator for ExpandStack<'p, F> {
                                 // Resolving the path failed, throw an error located at the
                                 // right place
                                 return Some(Ok(Event::error(
-                                    ProcessingErrorKind::IncludeNotFound { path },
+                                    ProcessingErrorKind::ImportNotFound { path },
                                     node.text_range(),
                                     location,
                                     false,
@@ -245,7 +245,7 @@ pub struct Processor<F: FileSystem> {
     file_cache: HashMap<FileId, Ast>,
     /// Mapping from canonical paths to FileIds
     file_ids: BiHashMap<PathOrSource, FileId>,
-    /// Mapping from #include/input paths to canonical paths
+    /// Mapping from #moj_import/input paths to canonical paths
     canonical_paths: BiHashMap<PathBuf, PathBuf>,
     /// List of include paths in resolution order
     system_paths: Vec<PathBuf>,

@@ -712,8 +712,8 @@ pub enum Token {
     PpIfDef,
     #[lang_util(display = "#ifndef", parser(display), kind = "preprocessor directive")]
     PpIfNDef,
-    #[lang_util(display = "#include", parser(display), kind = "preprocessor directive")]
-    PpInclude,
+    #[lang_util(display = "#moj_import", parser(display), kind = "preprocessor directive")]
+    PpMojImport,
     #[lang_util(display = "#line", parser(display), kind = "preprocessor directive")]
     PpLine,
     #[lang_util(display = "#pragma", parser(display), kind = "preprocessor directive")]
@@ -774,7 +774,7 @@ impl Token {
                 | Self::PpIf
                 | Self::PpIfDef
                 | Self::PpIfNDef
-                | Self::PpInclude
+                | Self::PpMojImport
                 | Self::PpLine
                 | Self::PpPragma
                 | Self::PpUndef

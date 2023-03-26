@@ -49,7 +49,7 @@ impl<'i> Lexer<'i> {
         self.input.into_line_map()
     }
 
-    /// Notify the lexer we are parsing an #include directive, and it should expect the next `<`
+    /// Notify the lexer we are parsing an #moj_import directive, and it should expect the next `<`
     /// token to start an angle-quoted string.
     ///
     /// # Parameters
