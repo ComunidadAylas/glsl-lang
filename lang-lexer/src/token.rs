@@ -1008,9 +1008,9 @@ pub enum Token {
     #[cfg_attr(feature = "v1", regex("#([ \t]|\\\\\r?\n)*ifndef"))]
     #[lang_util(display = "#ifndef", as(display), kind = "preprocessor directive")]
     PpIfNDef,
-    #[cfg_attr(feature = "v1", regex("#([ \t]|\\\\\r?\n)*include"))]
-    #[lang_util(display = "#include", as(display), kind = "preprocessor directive")]
-    PpInclude,
+    #[cfg_attr(feature = "v1", regex("#([ \t]|\\\\\r?\n)*moj_import"))]
+    #[lang_util(display = "#moj_import", as(display), kind = "preprocessor directive")]
+    PpMojImport,
     #[cfg_attr(feature = "v1", regex("#([ \t]|\\\\\r?\n)*line"))]
     #[lang_util(display = "#line", as(display), kind = "preprocessor directive")]
     PpLine,
@@ -1073,7 +1073,7 @@ impl Token {
                 | Self::PpIf
                 | Self::PpIfDef
                 | Self::PpIfNDef
-                | Self::PpInclude
+                | Self::PpMojImport
                 | Self::PpLine
                 | Self::PpPragma
                 | Self::PpUndef
