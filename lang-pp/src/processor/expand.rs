@@ -10,7 +10,6 @@ use rowan::{NodeOrToken, SyntaxElementChildren, TextSize};
 
 use lang_util::{
     located::{HasFileNumber, Resolver},
-    position::NodeSpan,
     FileId,
 };
 
@@ -22,12 +21,12 @@ use crate::{
 
 use super::{
     definition::{Definition, MacroInvocation},
-    event::{ErrorKind, Event, ProcessingErrorKind},
+    event::{Event, ProcessingErrorKind},
     nodes::{
         Define, Directive, DirectiveResult, Elif, Else, Empty, EndIf, Error as ErrorDirective,
-        Extension, If, IfDef, IfNDef, Include, Invalid, Line, ParsedLine, Pragma, Undef, Version,
+        Extension, If, IfDef, IfNDef, Invalid, Line, MojImport, ParsedLine, Pragma, Undef, Version,
     },
-    IncludeMode, ProcessorState,
+    ProcessorState,
 };
 
 mod if_stack;
@@ -271,13 +270,7 @@ impl ExpandOne {
                     (self.location.current_file(), node).try_into();
 
                 match directive {
-                    Ok(directive) => {
-                        if active {
-                            current_state.extension(&directive);
-                        }
-
-                        Event::directive(directive, !active)
-                    }
+                    Ok(directive) => Event::directive(directive, !active),
                     Err(error) => Event::directive_error(error, &self.location, !active),
                 }
             }
@@ -528,11 +521,11 @@ impl ExpandOne {
                     Err(error) => Event::directive_error(error, &self.location, !active),
                 }
             }
-            PP_INCLUDE => {
+            PP_MOJ_IMPORT => {
                 let active = self.if_stack.active();
                 // Parse the directive itself
-                let directive: DirectiveResult<Include> =
-                    (self.location.current_file(), node.clone()).try_into();
+                let directive: DirectiveResult<MojImport> =
+                    (self.location.current_file(), node).try_into();
 
                 // Perform macro substitution to get the path. If this fails, the directive is
                 // malformed and shouldn't be processed.
@@ -544,90 +537,21 @@ impl ExpandOne {
                     err => (err, None),
                 };
 
-                match directive {
-                    Ok(include) => {
-                        let error = match (path, current_state.include_mode) {
-                            (_, IncludeMode::None) if active => {
-                                // No include mode requested, thus we are not expecting include
-                                // directives and this is a parsing error
-                                Some(ErrorKind::Processing(
-                                    ProcessingErrorKind::IncludeNotSupported,
-                                ))
-                            }
-                            (Some(path), IncludeMode::GoogleInclude { warn }) if active => {
-                                // Compile-time include, enter nested file
-                                let node = include.node().clone();
-                                return HandleNodeResult::EnterFile(
-                                    Event::directive_errors(
-                                        include,
-                                        !active,
-                                        if warn {
-                                            Some(ErrorKind::warn_ext_use(
-                                                ext_name!("GL_GOOGLE_include_directive"),
-                                                None,
-                                                NodeSpan::new(
-                                                    self.location.current_file(),
-                                                    node.text_range(),
-                                                ),
-                                                &self.location,
-                                            ))
-                                        } else {
-                                            None
-                                        },
-                                        &self.location,
-                                    ),
-                                    node,
-                                    path,
-                                );
-                            }
-                            // Run-time ArbInclude or inactive if group
-                            (_, other) => {
-                                if other.warn() {
-                                    if matches!(other, IncludeMode::GoogleInclude { .. }) {
-                                        Some(ErrorKind::warn_ext_use(
-                                            ext_name!("GL_GOOGLE_include_directive"),
-                                            None,
-                                            NodeSpan::new(
-                                                self.location.current_file(),
-                                                node.text_range(),
-                                            ),
-                                            &self.location,
-                                        ))
-                                    } else if matches!(other, IncludeMode::ArbInclude { .. }) {
-                                        Some(ErrorKind::warn_ext_use(
-                                            ext_name!("GL_ARB_shading_language_include"),
-                                            None,
-                                            NodeSpan::new(
-                                                self.location.current_file(),
-                                                node.text_range(),
-                                            ),
-                                            &self.location,
-                                        ))
-                                    } else {
-                                        None
-                                    }
-                                } else {
-                                    None
-                                }
-                            }
-                        };
-
+                match (directive, path, active) {
+                    (Ok(include), Some(path), true) => {
+                        // #moj_import include, enter nested file
+                        let node = include.node().clone();
+                        return HandleNodeResult::EnterFile(
+                            Event::directive(include, !active),
+                            node,
+                            path,
+                        );
+                    }
+                    (Ok(include), _, active) => {
                         // Forward the directive
-                        Event::directive_errors(include, !active, error, &self.location)
+                        Event::directive(include, !active)
                     }
-                    Err(error) => {
-                        if current_state.include_mode == IncludeMode::None {
-                            // If includes are not enabled, the proper error we need to report is
-                            // IncludeNotSupported, ignoring any errors inside the directive body
-                            Event::directive_error(
-                                (ProcessingErrorKind::IncludeNotSupported, node),
-                                &self.location,
-                                !active,
-                            )
-                        } else {
-                            Event::directive_error(error, &self.location, !active)
-                        }
-                    }
+                    (Err(error), _, _) => Event::directive_error(error, &self.location, !active),
                 }
             }
             PP_LINE => {

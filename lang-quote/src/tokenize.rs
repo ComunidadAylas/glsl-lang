@@ -100,7 +100,7 @@ impl_tokenize!(ast::PreprocessorError, tokenize_preprocessor_error);
 impl_tokenize!(ast::PreprocessorIf, tokenize_preprocessor_if);
 impl_tokenize!(ast::PreprocessorIfDef, tokenize_preprocessor_ifdef);
 impl_tokenize!(ast::PreprocessorIfNDef, tokenize_preprocessor_ifndef);
-impl_tokenize!(ast::PreprocessorInclude, tokenize_preprocessor_include);
+impl_tokenize!(ast::PreprocessorMojImport, tokenize_preprocessor_include);
 impl_tokenize!(ast::PreprocessorLine, tokenize_preprocessor_line);
 impl_tokenize!(ast::PreprocessorPragma, tokenize_preprocessor_pragma);
 impl_tokenize!(ast::PreprocessorUndef, tokenize_preprocessor_undef);
@@ -1574,9 +1574,9 @@ fn tokenize_preprocessor(pp: &ast::Preprocessor) -> TokenStream {
             quote! { glsl_lang::ast::PreprocessorData::IfNDef(#pind) }
         }
 
-        ast::PreprocessorData::Include(ref pi) => {
-            let pi = tokenize_preprocessor_include(pi);
-            quote! { glsl_lang::ast::PreprocessorData::Include(#pi) }
+        ast::PreprocessorData::MojImport(ref pmi) => {
+            let pmi = tokenize_preprocessor_include(pmi);
+            quote! { glsl_lang::ast::PreprocessorData::MojImport(#pmi) }
         }
 
         ast::PreprocessorData::Line(ref pl) => {
@@ -1724,7 +1724,7 @@ fn tokenize_preprocessor_ifndef(pind: &ast::PreprocessorIfNDef) -> TokenStream {
     quote! { glsl_lang::ast::PreprocessorIfNDef::new(#pind, #span) }
 }
 
-fn tokenize_preprocessor_include(pi: &ast::PreprocessorInclude) -> TokenStream {
+fn tokenize_preprocessor_include(pi: &ast::PreprocessorMojImport) -> TokenStream {
     let span = tokenize_span(&pi.span);
     let pi = {
         let path = tokenize_path(&pi.path);

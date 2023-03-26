@@ -6,11 +6,7 @@ fn main() {
 
     // Generate interned strings
     string_cache_codegen::AtomType::new("exts::names::ExtNameAtom", "ext_name!")
-        .atoms(&[
-            "GL_ARB_shading_language_include",
-            "GL_GOOGLE_cpp_style_line_directive",
-            "GL_GOOGLE_include_directive",
-        ])
+        .atoms(&["GL_GOOGLE_cpp_style_line_directive"])
         .write_to_file(&out_dir.join("ext_names.rs"))
         .expect("failed to generate atoms");
 

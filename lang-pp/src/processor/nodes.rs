@@ -740,17 +740,17 @@ impl TryFrom<(FileId, SyntaxNode)> for Error {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Include {
+pub struct MojImport {
     file_id: FileId,
     path: SyntaxNode,
 }
 
-impl Include {
+impl MojImport {
     pub fn path(
         &self,
         current_state: &ProcessorState,
         location: &ExpandLocation,
-    ) -> Result<ParsedPath, IncludeError> {
+    ) -> Result<ParsedPath, MojImportError> {
         // Perform macro substitution
         let tokens = self
             .path
@@ -762,7 +762,7 @@ impl Include {
 
         // Make sure they are all tokens
         if !subs_events.iter().all(Event::is_token) {
-            return Err(IncludeError::MalformedPath {
+            return Err(MojImportError::MalformedPath {
                 tokens: subs_events.into_iter().map(Into::into).collect(),
             });
         }
@@ -778,9 +778,9 @@ impl Include {
         // By now, the include should either be a quote string or an angle string, and this should
         // be the only token
         if subs_tokens.is_empty() {
-            return Err(IncludeError::MissingPath);
+            return Err(MojImportError::MissingPath);
         } else if subs_tokens.len() > 1 {
-            return Err(IncludeError::ExtraTokens {
+            return Err(MojImportError::ExtraTokens {
                 tokens: subs_tokens.to_vec(),
             });
         }
@@ -791,7 +791,7 @@ impl Include {
             ANGLE_STRING => PathType::Angle,
             QUOTE_STRING => PathType::Quote,
             _ => {
-                return Err(IncludeError::InvalidPathLiteral {
+                return Err(MojImportError::InvalidPathLiteral {
                     token: first_token.clone(),
                 });
             }
@@ -808,26 +808,26 @@ impl Include {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
-pub enum IncludeError {
-    #[error("missing path for #include directive")]
+pub enum MojImportError {
+    #[error("missing path for #moj_import directive")]
     MissingPath,
     #[error("malformed path")]
     MalformedPath { tokens: Vec<SendEvent> },
-    #[error("extra tokens in #include path")]
+    #[error("extra tokens in #moj_import path")]
     ExtraTokens { tokens: Vec<OutputToken> },
     #[error("invalid path literal")]
     InvalidPathLiteral { token: OutputToken },
 }
 
-impl TryFrom<(FileId, SyntaxNode)> for Include {
-    type Error = IncludeError;
+impl TryFrom<(FileId, SyntaxNode)> for MojImport {
+    type Error = MojImportError;
 
     fn try_from((file_id, value): (FileId, SyntaxNode)) -> Result<Self, Self::Error> {
         Ok(Self {
             file_id,
             path: value
                 .children()
-                .find(|node| node.kind() == PP_INCLUDE_PATH)
+                .find(|node| node.kind() == PP_MOJ_IMPORT_PATH)
                 .ok_or(Self::Error::MissingPath)?,
         })
     }
