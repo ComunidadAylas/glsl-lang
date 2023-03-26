@@ -168,7 +168,6 @@ impl Default for Registry {
                 ),
                 ExtensionSpec::new(ExtNameAtom::from("GL_ARB_shader_texture_lod"), vec![]),
                 ExtensionSpec::new(ExtNameAtom::from("GL_ARB_shading_language_420pack"), vec![]),
-                ExtensionSpec::new(ext_name!("GL_ARB_shading_language_include"), vec![]),
                 ExtensionSpec::new(ExtNameAtom::from("GL_ARB_shading_language_packing"), vec![]),
                 ExtensionSpec::new(ExtNameAtom::from("GL_ARB_sparse_texture2"), vec![]),
                 ExtensionSpec::new(ExtNameAtom::from("GL_ARB_tessellation_shader"), vec![]),
@@ -473,7 +472,6 @@ impl Default for Registry {
                         type_name!("uimageCubeArray"),
                     ],
                 ),
-                ExtensionSpec::new(ext_name!("GL_GOOGLE_include_directive"), vec![]),
                 ExtensionSpec::new(ext_name!("GL_GOOGLE_cpp_style_line_directive"), vec![]),
                 ExtensionSpec::new(ExtNameAtom::from("GL_KHR_blend_equation_advanced"), vec![]),
                 ExtensionSpec::new(

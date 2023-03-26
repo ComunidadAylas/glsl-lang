@@ -21,8 +21,8 @@ pub(super) fn token_from_syntax_kind(
     // First, try the tokens that don't require text processing
     match kind {
         SyntaxKind::PP_EMPTY
-        | SyntaxKind::PP_INCLUDE
-        | SyntaxKind::PP_INCLUDE_PATH
+        | SyntaxKind::PP_MOJ_IMPORT
+        | SyntaxKind::PP_MOJ_IMPORT_PATH
         | SyntaxKind::PP_DEFINE
         | SyntaxKind::PP_DEFINE_ARGS
         | SyntaxKind::PP_DEFINE_ARG

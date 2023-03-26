@@ -748,13 +748,13 @@ preprocessor_if_n_def: ast::PreprocessorIfNDef = {
     <l:@L> <i:identifier> <r:@R> => ast::PreprocessorIfNDefData { ident: i }.spanned(l, r)
 };
 
-preprocessor_include: ast::PreprocessorInclude = {
+preprocessor_moj_import: ast::PreprocessorMojImport = {
     <l:@L> <p:pp_path_relative> <r:@R> =>
-        ast::PreprocessorIncludeData {
+        ast::PreprocessorMojImportData {
             path: ast::PathData::Relative(p.as_str().to_owned()).spanned(l, r)
         }.spanned(l, r),
     <l:@L> <p:pp_path_absolute> <r:@R> =>
-        ast::PreprocessorIncludeData {
+        ast::PreprocessorMojImportData {
             path: ast::PathData::Absolute(p.as_str().to_owned()).spanned(l, r)
         }.spanned(l, r),
 };
@@ -814,20 +814,20 @@ preprocessor_extension: ast::PreprocessorExtension = {
 };
 
 preprocessor: ast::Preprocessor = {
-    <l:@L> "#define"    <p:preprocessor_define>    <r:@R> => ast::PreprocessorData::Define(p).spanned(l, r),
-    <l:@L> "#else"                                 <r:@R> => ast::PreprocessorData::Else.spanned(l, r),
-    <l:@L> "#elif"      <p:preprocessor_else_if>   <r:@R> => ast::PreprocessorData::ElseIf(p).spanned(l, r),
-    <l:@L> "#endif"                                <r:@R> => ast::PreprocessorData::EndIf.spanned(l, r),
-    <l:@L> "#error"     <p:preprocessor_error>     <r:@R> => ast::PreprocessorData::Error(p).spanned(l, r),
-    <l:@L> "#if"        <p:preprocessor_if>        <r:@R> => ast::PreprocessorData::If(p).spanned(l, r),
-    <l:@L> "#ifdef"     <p:preprocessor_if_def>    <r:@R> => ast::PreprocessorData::IfDef(p).spanned(l, r),
-    <l:@L> "#ifndef"    <p:preprocessor_if_n_def>  <r:@R> => ast::PreprocessorData::IfNDef(p).spanned(l, r),
-    <l:@L> "#include"   <p:preprocessor_include>   <r:@R> => ast::PreprocessorData::Include(p).spanned(l, r),
-    <l:@L> "#line"      <p:preprocessor_line>      <r:@R> => ast::PreprocessorData::Line(p).spanned(l, r),
-    <l:@L> "#pragma"    <p:preprocessor_pragma>    <r:@R> => ast::PreprocessorData::Pragma(p).spanned(l, r),
-    <l:@L> "#undef"     <p:preprocessor_undef>     <r:@R> => ast::PreprocessorData::Undef(p).spanned(l, r),
-    <l:@L> "#version"   <p:preprocessor_version>   <r:@R> => ast::PreprocessorData::Version(p).spanned(l, r),
-    <l:@L> "#extension" <p:preprocessor_extension> <r:@R> => ast::PreprocessorData::Extension(p).spanned(l, r),
+    <l:@L> "#define"     <p:preprocessor_define>     <r:@R> => ast::PreprocessorData::Define(p).spanned(l, r),
+    <l:@L> "#else"                                   <r:@R> => ast::PreprocessorData::Else.spanned(l, r),
+    <l:@L> "#elif"       <p:preprocessor_else_if>    <r:@R> => ast::PreprocessorData::ElseIf(p).spanned(l, r),
+    <l:@L> "#endif"                                  <r:@R> => ast::PreprocessorData::EndIf.spanned(l, r),
+    <l:@L> "#error"      <p:preprocessor_error>      <r:@R> => ast::PreprocessorData::Error(p).spanned(l, r),
+    <l:@L> "#if"         <p:preprocessor_if>         <r:@R> => ast::PreprocessorData::If(p).spanned(l, r),
+    <l:@L> "#ifdef"      <p:preprocessor_if_def>     <r:@R> => ast::PreprocessorData::IfDef(p).spanned(l, r),
+    <l:@L> "#ifndef"     <p:preprocessor_if_n_def>   <r:@R> => ast::PreprocessorData::IfNDef(p).spanned(l, r),
+    <l:@L> "#moj_import" <p:preprocessor_moj_import> <r:@R> => ast::PreprocessorData::MojImport(p).spanned(l, r),
+    <l:@L> "#line"       <p:preprocessor_line>       <r:@R> => ast::PreprocessorData::Line(p).spanned(l, r),
+    <l:@L> "#pragma"     <p:preprocessor_pragma>     <r:@R> => ast::PreprocessorData::Pragma(p).spanned(l, r),
+    <l:@L> "#undef"      <p:preprocessor_undef>      <r:@R> => ast::PreprocessorData::Undef(p).spanned(l, r),
+    <l:@L> "#version"    <p:preprocessor_version>    <r:@R> => ast::PreprocessorData::Version(p).spanned(l, r),
+    <l:@L> "#extension"  <p:preprocessor_extension>  <r:@R> => ast::PreprocessorData::Extension(p).spanned(l, r),
 };
 
 external_declaration: Option<ast::ExternalDeclaration> = {
@@ -1103,7 +1103,7 @@ extern {
         "#if"                    => Token::PpIf,
         "#ifdef"                 => Token::PpIfDef,
         "#ifndef"                => Token::PpIfNDef,
-        "#include"               => Token::PpInclude,
+        "#moj_import"            => Token::PpMojImport,
         "#line"                  => Token::PpLine,
         "#pragma"                => Token::PpPragma,
         "#undef"                 => Token::PpUndef,
