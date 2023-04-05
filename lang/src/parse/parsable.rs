@@ -937,7 +937,7 @@ impl Extractable<ast::TranslationUnit> for ast::StructSpecifier {
 
 impl Extractable<ast::TranslationUnit> for ast::Expr {
     fn wrap(source: &str) -> Cow<str> {
-        format!("void main() {{ {}; }}", source).into()
+        format!("void main() {{\n{}\n;}}", source).into()
     }
 
     fn extract(ast::TranslationUnit(extdecls): ast::TranslationUnit) -> Option<Self> {
@@ -991,7 +991,7 @@ impl Extractable<ast::TranslationUnit> for ast::Preprocessor {
 
 impl Extractable<ast::TranslationUnit> for ast::Statement {
     fn wrap(source: &str) -> Cow<str> {
-        format!("void main() {{ {} }}", source).into()
+        format!("void main() {{\n{}\n}}", source).into()
     }
 
     fn extract(ast::TranslationUnit(extdecls): ast::TranslationUnit) -> Option<Self> {
