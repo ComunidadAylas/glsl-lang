@@ -1018,3 +1018,33 @@ impl Extractable<ast::TranslationUnit> for ast::Statement {
         None
     }
 }
+
+impl Extractable<ast::TranslationUnit> for Vec<ast::Statement> {
+    fn wrap(source: &str) -> Cow<str> {
+        format!("void main() {{\n{}\n}}", source).into()
+    }
+
+    fn extract(ast::TranslationUnit(extdecls): ast::TranslationUnit) -> Option<Self> {
+        if let ast::Node {
+            content:
+                ast::ExternalDeclarationData::FunctionDefinition(ast::Node {
+                    content:
+                        ast::FunctionDefinitionData {
+                            statement:
+                                ast::Node {
+                                    content: ast::CompoundStatementData { statement_list, .. },
+                                    ..
+                                },
+                            ..
+                        },
+                    ..
+                }),
+            ..
+        } = extdecls.into_iter().next().unwrap()
+        {
+            return Some(statement_list);
+        }
+
+        None
+    }
+}
